@@ -37,19 +37,28 @@ exports.signup = async (req, res) => {
 
 // --- User Login ---
 exports.login = async (req, res) => {
-    let user = await Users.findOne({ email: req.body.email });
-    if (!user) {
-        return res.json({ success: false, errors: "Wrong Email ID" });
-    }
+    try {
+        if (!req.body.email || !req.body.password) {
+            return res.status(400).json({ success: false, errors: "Email and password required" });
+        }
 
-    // --- Password Comparison Logic ---
-    const passCompare = await bcrypt.compare(req.body.password, user.password); 
-    
-    if (passCompare) {
-        const data = { user: { id: user.id } };
-        const token = jwt.sign(data, process.env.JWT_SECRET, { expiresIn: '1d' });
-        res.json({ success: true, token });
-    } else {
-        res.json({ success: false, errors: "Wrong Password" });
+        let user = await Users.findOne({ email: req.body.email });
+        if (!user) {
+            return res.json({ success: false, errors: "Wrong Email ID" });
+        }
+
+        // --- Password Comparison Logic ---
+        const passCompare = await bcrypt.compare(req.body.password, user.password); 
+        
+        if (passCompare) {
+            const data = { user: { id: user.id } };
+            const token = jwt.sign(data, process.env.JWT_SECRET, { expiresIn: '1d' });
+            res.json({ success: true, token });
+        } else {
+            res.json({ success: false, errors: "Wrong Password" });
+        }
+    } catch (error) {
+        console.error("Login error:", error);
+        res.status(500).json({ success: false, error: error.message });
     }
 };
