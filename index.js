@@ -19,9 +19,14 @@ app.use(express.json()); // To parse JSON bodies
 app.use(cors());         // To allow cross-origin requests
 
 // Database Connection
-mongoose.connect(process.env.DB_URI)
+mongoose.connect(process.env.DB_URI, {
+  serverSelectionTimeoutMS: 5000,
+})
   .then(() => console.log("MongoDB connected successfully."))
-  .catch((err) => console.error("MongoDB connection error:", err));
+  .catch((err) => {
+    console.error("MongoDB connection error:", err);
+    console.log("Server will continue to run without database connection");
+  });
 
 // --- API Routes ---
 
