@@ -1,0 +1,14 @@
+# Dependencies
+node_modules/
+
+# Environment Variables (The Secret Safe!)
+.env
+
+# Uploads
+# We don't want to upload all our product images to GitHub
+upload/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
